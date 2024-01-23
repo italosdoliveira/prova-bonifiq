@@ -1,28 +1,40 @@
 ﻿using ProvaPub.Models;
+using ProvaPub.Services.Adapters;
+using ProvaPub.Services.Dtos;
+using ProvaPub.Services.Interfaces;
 
 namespace ProvaPub.Services
 {
-	public class OrderService
+    public class OrderService
 	{
-		public async Task<Order> PayOrder(string paymentMethod, decimal paymentValue, int customerId)
-		{
-			if (paymentMethod == "pix")
-			{
-				//Faz pagamento...
-			}
-			else if (paymentMethod == "creditcard")
-			{
-				//Faz pagamento...
-			}
-			else if (paymentMethod == "paypal")
-			{
-				//Faz pagamento...
-			}
+		public Dictionary<string, IPaymentAdapter> paymentMethods;
 
-			return await Task.FromResult( new Order()
+        public OrderService()
+        {
+			paymentMethods = new Dictionary<string, IPaymentAdapter>
 			{
-				Value = paymentValue
-			});
+				{ "pix", new PixAdapter()},
+				{ "creditcard", new CreditCardAdapter()},
+				{ "paypal", new PayPalAdapter()}
+			};
+        }
+
+        public async Task<Order> PayOrder(string paymentMethod, decimal paymentValue, int customerId)
+		{
+			try
+			{
+				PaymentResponse result = this.paymentMethods[paymentMethod].Pay(paymentValue, customerId);
+
+                return await Task.FromResult(new Order()
+                {
+					CustomerId = customerId,
+                    Value = paymentValue
+                });
+            }
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+            }
 		}
 	}
 }
