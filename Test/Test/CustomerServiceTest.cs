@@ -78,7 +78,7 @@ namespace Test
         }
 
         [Fact]
-        public void PurchaseValuesIsGreaterThanHundred_ShouldBeTrueIfHaveBoughtBeforeEqualZero()
+        public void PurchaseValuesIsGreaterThanHundred_ShouldBeFalseIfHaveBoughtBeforeEqualZero()
         {
             var customerRepositoryMock = new Mock<ICustomerRepository>();
             var orderRepositoryMock = new Mock<IOrderRepository>();
@@ -89,13 +89,13 @@ namespace Test
 
             var service = new CustomerService(customerRepositoryMock.Object, orderRepositoryMock.Object);
 
-            var result = service.PurchaseValuesIsGreaterThanHundred(1, 101);
+            var result = service.PurchaseValuesIsGreaterThanHundred(1, 100);
 
-            Assert.True(result);
+            Assert.False(result);
         }
 
         [Fact]
-        public void PurchaseValuesIsGreaterThanHundred_ShouldBeTrueIfHaveBoughtBeforeGreaterThanZero()
+        public void PurchaseValuesIsGreaterThanHundred_ShouldBeTrueIfHaveBoughtBeforeGreaterThanZeroAndPurchaseValue()
         {
             var customerRepositoryMock = new Mock<ICustomerRepository>();
             var orderRepositoryMock = new Mock<IOrderRepository>();
@@ -106,7 +106,7 @@ namespace Test
 
             var service = new CustomerService(customerRepositoryMock.Object, orderRepositoryMock.Object);
 
-            var result = service.PurchaseValuesIsGreaterThanHundred(1, 100);
+            var result = service.PurchaseValuesIsGreaterThanHundred(1, 101);
 
             Assert.True(result);
         }
